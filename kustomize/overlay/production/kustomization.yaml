@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+
+resources:
+  - ds-idrepo
+  - ds-cts
+  - am
+  - idm
+  - admin-ui
+  - login-ui
+  - end-user-ui
+
+  - platform/nginx
+  - platform/routes
+  - platform/replication-network
+
+  - security/pki
+ 

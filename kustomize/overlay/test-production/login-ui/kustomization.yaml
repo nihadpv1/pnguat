@@ -1,0 +1,10 @@
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+components:
+- ../image-defaulter
+resources:
+ - ../../../vendor/forgeops-2026.1/login-ui
+patches:
+- path: sa-deployments.yaml
+- path: remove-ingress.yaml
+namespace: forgerock

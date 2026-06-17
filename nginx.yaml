@@ -1,0 +1,125 @@
+apiVersion: charts.nginx.org/v1alpha1
+kind: NginxIngress
+
+metadata:
+  name: forgerock-nginx
+  namespace: nginx-ingress
+
+spec:
+  controller:
+
+    image:
+      repository: nginx/nginx-ingress
+      tag: edge-ubi
+      pullPolicy: Always
+
+    ingressClass:
+      name: nginx
+
+    kind: deployment
+
+    replicaCount: 2
+
+    nginxplus: false
+
+    enableCustomResources: true
+
+    customConfigMap: ""
+
+    config:
+      entries:
+        use-forwarded-headers: "true"
+
+    # OpenShift-compatible non-root ports
+    containerPort:
+      http: 8080
+      https: 8443
+
+    # Critical: internal nginx listeners
+    defaultHTTPListenerPort: 8080
+    defaultHTTPSListenerPort: 8443
+
+    service:
+      create: true
+      type: ClusterIP
+
+      httpPort:
+        enable: true
+        port: 80
+        targetPort: 8080
+
+      httpsPort:
+        enable: true
+        port: 443
+        targetPort: 8443
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+    podSecurityContext:
+      seccompProfile:
+        type: RuntimeDefault
+
+    securityContext:
+      allowPrivilegeEscalation: true
+
+      runAsNonRoot: false
+
+      runAsUser: 101
+
+      capabilities:
+        drop:
+          - ALL
+
+    nginxStatus:
+      enable: true
+      port: 8080
+      allowCidrs: "127.0.0.1"
+
+    readyStatus:
+      enable: true
+      port: 8081
+      initialDelaySeconds: 0
+
+    serviceAccount:
+      imagePullSecretName: ""
+
+    reportIngressStatus:
+      enable: true
+      enableLeaderElection: true
+      leaderElectionLockName: forgerock-nginx-nginx-ingress-leader-election
+
+    hostNetwork: false
+
+    dnsPolicy: ClusterFirst
+
+    enableCertManager: false
+    enableOIDC: false
+    enableExternalDNS: false
+    enableTLSPassthrough: false
+    enableSnippets: false
+    enableLatencyMetrics: false
+    enableSSLDynamicReload: true
+
+    healthStatus: false
+    healthStatusURI: /nginx-health
+
+    nginxReloadTimeout: 60000
+
+    logLevel: info
+    logFormat: glog
+
+prometheus:
+  create: true
+  port: 9113
+  scheme: http
+
+rbac:
+  create: true
+

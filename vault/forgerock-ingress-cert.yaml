@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: forgerock-ingress-cert
+  namespace: forgerock
+spec:
+  secretName: tls-identity-platform.domain.local
+  commonName: iam.apps.kvm.lab
+  dnsNames:
+    - iam.apps.kvm.lab
+  issuerRef:
+    name: vault-issuer
+    kind: ClusterIssuer

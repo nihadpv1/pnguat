@@ -1,0 +1,42 @@
+controller:
+  replicaCount: 1
+
+  service:
+    type: ClusterIP
+
+  containerPort:
+    http: 8080
+    https: 8443
+
+  hostPort:
+    enabled: false
+
+  hostNetwork: false
+
+  admissionWebhooks:
+    enabled: false
+
+  metrics:
+    enabled: true
+
+  config:
+    use-forwarded-headers: "true"
+    proxy-buffer-size: "16k"
+
+  podSecurityContext:
+    runAsNonRoot: true
+
+  containerSecurityContext:
+    runAsNonRoot: false
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+
+  ingressClassResource:
+    name: nginx
+    enabled: true
+    default: true
+
+  ingressClass: nginx
+

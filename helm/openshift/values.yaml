@@ -1,0 +1,97 @@
+am:
+  replicaCount: 2
+  resources:
+    limits:
+      memory: 4Gi
+    requests:
+      cpu: 2000m
+      memory: 4Gi
+idm:
+  replicaCount: 3
+  resources:
+    limits:
+      memory: 2Gi
+    requests:
+      cpu: 1500m
+      memory: 2Gi
+ds_idrepo:
+  replicaCount: 3
+  resources:
+    limits:
+      memory: 6Gi
+    requests:
+      cpu: 1500m
+      memory: 6Gi
+  volumeClaimSpec:
+    storageClassName: fast
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 100Gi
+ds_cts:
+  replicaCount: 3
+  resources:
+    limits:
+      memory: 5Gi
+    requests:
+      cpu: 2000m
+      memory: 5Gi
+  volumeClaimSpec:
+    storageClassName: fast
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 100Gi
+platform:
+  ingress:
+    hosts:
+    - iam.apps-crc.testing
+    className: none
+  disable_secret_agent_config: true
+  secrets_enabled: true
+  secrets:
+    amster:
+      annotations:
+        secret-generator.v1.mittwald.de/type: ssh-keypair
+    am_env_secrets:
+      annotations:
+        length: 32
+        autogenerate:
+        - AM_AUTHENTICATION_SHARED_SECRET
+        - AM_ENCRYPTION_KEY
+        - AM_OIDC_CLIENT_SUBJECT_IDENTIFIER_HASH_SALT
+        - AM_PASSWORDS_AMADMIN_CLEAR
+        - AM_SELFSERVICE_LEGACY_CONFIRMATION_EMAIL_LINK_SIGNING_KEY
+        - AM_SESSION_STATELESS_ENCRYPTION_KEY
+        - AM_SESSION_STATELESS_SIGNING_KEY
+    amster_env_secrets:
+      annotations:
+        length: 24
+        autogenerate:
+        - IDM_PROVISIONING_CLIENT_SECRET
+        - IDM_RS_CLIENT_SECRET
+    ds_env_secrets:
+      annotations:
+        length: 32
+        autogenerate:
+        - AM_STORES_APPLICATION_PASSWORD
+        - AM_STORES_CTS_PASSWORD
+        - AM_STORES_USER_PASSWORD
+    ds_passwords:
+      annotations:
+        length: 32
+        autogenerate:
+        - dirmanager.pw
+        - monitor.pw
+    idm_env_secrets:
+      annotations:
+        length: 24
+        autogenerate:
+        - OPENIDM_ADMIN_PASSWORD
+    keystore_create:
+      annotations:
+        length: 24
+        autogenerate:
+        - KEYSTORE_PASSWORD

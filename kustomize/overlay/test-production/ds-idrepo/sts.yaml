@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: ds-idrepo
+  namespace: forgerock
+
+spec:
+  replicas: 1
+  serviceName: ds-idrepo
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: ds-idrepo
+  template:
+    metadata:
+      labels:
+        app: ds-idrepo
+    spec:
+      serviceAccountName: forgerock-sa
+      terminationGracePeriodSeconds: 120
+     
+      containers:
+        - name: ds
+          env:
+            # Unique site identity
+            - name: DS_GROUP_ID
+              value: primary
+
+           
+          resources:
+            requests:
+              cpu: "1"
+              memory: 500Mi
+            limits:
+              memory: 2Gi
+      initContainers:
+        - name: init
+          resources:
+            requests:
+              cpu: 250m
+              memory: 1Gi
+            limits:
+              memory: 2Gi
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+
+        
+        storageClassName: crc-csi-hostpath-provisioner

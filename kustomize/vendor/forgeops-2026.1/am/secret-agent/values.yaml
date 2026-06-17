@@ -1,0 +1,10 @@
+platform:
+  disable_secret_agent_config: false
+am:
+  image:
+    repository: "am"
+    tag: ""
+am_custom:
+  image:
+    repository: "am-custom"
+    tag: ""

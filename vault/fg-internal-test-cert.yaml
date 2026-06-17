@@ -1,0 +1,19 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: fg-internal-test
+  namespace: forgerock
+spec:
+  secretName: fg-internal-test-tls
+  commonName: ds-idrepo.forgerock.svc
+  dnsNames:
+    - ds
+    - ds-idrepo
+    - ds-idrepo.forgerock.svc
+    - ds-idrepo.forgerock.svc.cluster.local
+    - ds-cts
+    - ds-cts.forgerock.svc
+    - ds-cts.forgerock.svc.cluster.local
+  issuerRef:
+    name: vault-forgerock-internal
+    kind: ClusterIssuer

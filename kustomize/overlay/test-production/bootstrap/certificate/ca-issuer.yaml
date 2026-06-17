@@ -1,0 +1,8 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: forgerock-ca-issuer
+  namespace: forgerock
+spec:
+  ca:
+    secretName: forgerock-root-ca

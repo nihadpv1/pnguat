@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: forgeops-nginx
+  namespace: nginx-ingress
+  labels:
+    app: nginx-ingress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-ingress
+  template:
+    metadata:
+      labels:
+        app: nginx-ingress
+    spec:
+      serviceAccountName: nginx-ingress
+      containers:
+      - name: nginx-ingress
+        image: nginx/nginx-ingress:3.5.1-ubi
+        args:
+        - -ingress-class=nginx
+        - -health-status=true
+        - -nginx-status=true
+        - -nginx-status-port=8080
+        - -report-ingress-status
+        - -enable-leader-election=true
+        - -leader-election-lock-name=forgeops-leader
+        securityContext:
+          runAsUser: 0
+        ports:
+        - name: http
+          containerPort: 80
+        - name: https
+          containerPort: 443
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-ingress-svc
+  namespace: nginx-ingress
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  - name: https
+    port: 443
+    targetPort: 443
+  selector:
+    app: nginx-ingress
+  type: ClusterIP

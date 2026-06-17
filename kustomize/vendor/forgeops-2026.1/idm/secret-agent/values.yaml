@@ -1,0 +1,13 @@
+platform:
+  truststore:
+    secret:
+      enabled: true
+idm:
+  enabled: true
+  image:
+    repository: idm
+    tag: ""
+idm_custom:
+  image:
+    repository: "idm-custom"
+    tag: ""

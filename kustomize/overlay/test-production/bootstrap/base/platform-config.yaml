@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: platform-config
+
+data:
+  FQDN: iam.apps-crc.testing
+  AM_SERVER_FQDN: iam.apps-crc.testing
+
+  AM_URL: https://iam.apps-crc.testing/am
+  IDM_REST_URL: https://iam.apps-crc.testing/openidm
+  PLATFORM_ADMIN_URL: https://iam.apps-crc.testing/platform
+  ENDUSER_UI_URL: https://iam.apps-crc.testing/enduser
+  LOGIN_UI_URL: https://iam.apps-crc.testing/am/XUI/#/service/Login
+
+  ADMIN_CLIENT_ID: idm-admin-ui
+  ENDUSER_CLIENT_ID: end-user-ui
+
+  AM_STORES_CTS_SERVERS: ds-cts-0.ds-cts:1636,ds-cts-1.ds-cts:1636,ds-cts-2.ds-cts:1636
+  AM_STORES_USER_SERVERS: ds-idrepo-0.ds-idrepo:1636,ds-idrepo-1.ds-idrepo:1636,ds-idrepo-2.ds-idrepo:1636
