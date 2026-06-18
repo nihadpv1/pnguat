@@ -26,6 +26,13 @@ spec:
       terminationGracePeriodSeconds: 120
 
       affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/forgerock
+                    operator: Exists
+
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
@@ -35,6 +42,12 @@ spec:
                     values:
                       - am
               topologyKey: kubernetes.io/hostname
+
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: forgerock
+          effect: NoSchedule
 
       topologySpreadConstraints:
         - maxSkew: 1

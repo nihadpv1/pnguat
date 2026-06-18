@@ -20,7 +20,15 @@ spec:
     spec:
       serviceAccountName: forgerock-sa
       terminationGracePeriodSeconds: 120
+
       affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/forgerock
+                    operator: Exists
+
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
@@ -30,6 +38,13 @@ spec:
                     values:
                       - ds-idrepo
               topologyKey: kubernetes.io/hostname
+
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: forgerock
+          effect: NoSchedule
+
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
@@ -37,6 +52,7 @@ spec:
           labelSelector:
             matchLabels:
               app: ds-idrepo
+
       containers:
         - name: ds
           env:
@@ -55,6 +71,7 @@ spec:
               memory: 4Gi
             limits:
               memory: 6Gi
+
       initContainers:
         - name: init
           resources:
@@ -63,6 +80,7 @@ spec:
               memory: 1Gi
             limits:
               memory: 2Gi
+
   volumeClaimTemplates:
     - metadata:
         name: data
