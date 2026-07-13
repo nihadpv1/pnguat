@@ -1,0 +1,6 @@
+- op: replace
+  path: /roleRef/name
+  value: identity-platform-keystore-create:pnguat
+- op: replace
+  path: /subjects/0/namespace
+  value: pnguat

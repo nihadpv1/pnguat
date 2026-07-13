@@ -1,0 +1,26 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: admin-ui
+    app.kubernetes.io/component: admin-ui
+    app.kubernetes.io/instance: identity-platform
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: identity-platform
+    app.kubernetes.io/part-of: identity-platform
+    app.kubernetes.io/version: 1.0.0
+    helm.sh/chart: identity-platform-1.0.0
+  name: platform-route
+  namespace: pnguat
+spec:
+  host: ping-uat.apps.pnguat.arabbanking.local
+  path: /platform
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+  to:
+    kind: Service
+    name: admin-ui
+    weight: 100
+  wildcardPolicy: None

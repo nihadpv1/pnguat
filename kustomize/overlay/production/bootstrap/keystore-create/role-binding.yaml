@@ -1,6 +1,0 @@
-- op: replace
-  path: /roleRef/name
-  value: identity-platform-keystore-create:forgerock
-- op: replace
-  path: /subjects/0/namespace
-  value: forgerock

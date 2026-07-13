@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: ds-idrepo
+  namespace: pnguat
+
+spec:
+  replicas: 1
+  serviceName: ds-idrepo
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: ds-idrepo
+  template:
+    metadata:
+      labels:
+        app: ds-idrepo
+    spec:
+      serviceAccountName: pnguat-sa
+      terminationGracePeriodSeconds: 120
+
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/pnguat
+                    operator: Exists
+
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - ds-idrepo
+              topologyKey: kubernetes.io/hostname
+
+
+
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: ds-idrepo
+
+      containers:
+        - name: ds
+          env:
+            # Unique site identity
+            - name: DS_GROUP_ID
+              value: primary
+
+            # Initial topology discovery seed
+            # Use stable VIP/LB in production if available
+            - name: DS_BOOTSTRAP_REPLICATION_SERVERS
+              value: "ds-repl-primary.company.com:8989"
+
+          resources:
+            requests:
+              cpu: "1"
+              memory: 2Gi
+            limits:
+              memory: 4Gi
+
+      initContainers:
+        - name: init
+          resources:
+            requests:
+              cpu: 250m
+              memory: 1Gi
+            limits:
+              memory: 2Gi
+
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
+
+        
+        storageClassName: fast

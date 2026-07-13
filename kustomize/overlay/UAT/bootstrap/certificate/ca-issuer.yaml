@@ -1,0 +1,8 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: forgerock-ca-issuer
+  namespace: pnguat
+spec:
+  ca:
+    secretName: pnguat-root-ca

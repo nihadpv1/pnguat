@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: ds-cts
+  namespace: pnguat
+
+spec:
+  replicas: 1
+
+  serviceName: ds-cts
+
+  updateStrategy:
+    type: RollingUpdate
+
+  selector:
+    matchLabels:
+      app: ds-cts
+
+  template:
+    metadata:
+      labels:
+        app: ds-cts
+
+    spec:
+      serviceAccountName: pnguat-sa
+
+      terminationGracePeriodSeconds: 120
+
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/pnguat
+                    operator: Exists
+
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - ds-cts
+              topologyKey: kubernetes.io/hostname
+
+
+
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: ds-cts
+
+      containers:
+        - name: ds
+
+          resources:
+            requests:
+              cpu: "1"
+              memory: 2Gi
+
+            limits:
+              memory: 4Gi
+
+      initContainers:
+        - name: init
+
+          resources:
+            requests:
+              cpu: 250m
+              memory: 1Gi
+
+            limits:
+              memory: 2Gi
+
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+
+      spec:
+        accessModes:
+          - ReadWriteOnce
+
+        resources:
+          requests:
+            storage: 20Gi
+
+        storageClassName: fast
