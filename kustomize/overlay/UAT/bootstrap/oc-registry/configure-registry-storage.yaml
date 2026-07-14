@@ -1,0 +1,14 @@
+# =====================================================================
+# OPENSHIFT INTERNAL REGISTRY CONFIGURATION
+# Configures the cluster registry to use your NFS-backed PVC.
+# =====================================================================
+
+apiVersion: imageregistry.operator.openshift.io/v1
+kind: Config
+metadata:
+  name: cluster # ◄ Must be named 'cluster' as it is a cluster-wide singleton
+spec:
+  managementState: Managed # ◄ Forces the operator to actively manage the registry
+  storage:
+    pvc:
+      claim: image-registry-storage-pvc # ◄ Binds it to your NFS PVC name

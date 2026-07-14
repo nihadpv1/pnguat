@@ -1,0 +1,155 @@
+# =====================================================================
+# FORGEROCK IMAGES - AUTOMATIC IMPORT DEFINITION
+# =====================================================================
+
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: am
+  namespace: pnguat
+spec:
+  lookupPolicy:
+    local: true # Allows local deployments to resolve this short-name image
+  tags:
+    - name: "8.0.2"
+      from:
+        kind: DockerImage
+        name: us-docker.pkg.dev/forgeops-public/images/am:8.0.2
+      referencePolicy:
+        type: Source
+
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: amster
+  namespace: pnguat
+spec:
+  lookupPolicy:
+    local: true
+  tags:
+    - name: "8.0.2"
+      from:
+        kind: DockerImage
+        name: us-docker.pkg.dev/forgeops-public/images/amster:8.0.2
+      referencePolicy:
+        type: Source
+
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: ds
+  namespace: pnguat
+  lookupPolicy:
+    local: true
+  tags:
+    - name: "8.0.2"
+      from:
+        kind: DockerImage
+        name: us-docker.pkg.dev/forgeops-public/images/ds:8.0.2
+      referencePolicy:
+        type: Source
+
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: idm
+  namespace: pnguat
+spec:
+  lookupPolicy:
+    local: true
+  tags:
+    - name: "8.0.1"
+      from:
+        kind: DockerImage
+        name: us-docker.pkg.dev/forgeops-public/images/idm:8.0.1
+      referencePolicy:
+        type: Source
+
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: ig
+  namespace: pnguat
+spec:
+  lookupPolicy:
+    local: true
+  tags:
+    - name: "8.0.2"
+      from:
+        kind: DockerImage
+        name: us-docker.pkg.dev/forgeops-public/images/ig:8.0.2
+      referencePolicy:
+        type: Source
+
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: admin-ui
+  namespace: pnguat
+spec:
+  lookupPolicy:
+    local: true
+  tags:
+    - name: "8.0.1"
+      from:
+        kind: DockerImage
+        name: us-docker.pkg.dev/forgeops-public/images/admin-ui:8.0.1
+      referencePolicy:
+        type: Source
+
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: end-user-ui
+  namespace: pnguat
+spec:
+  lookupPolicy:
+    local: true
+  tags:
+    - name: "8.0.1"
+      from:
+        kind: DockerImage
+        name: us-docker.pkg.dev/forgeops-public/images/end-user-ui:8.0.1
+      referencePolicy:
+        type: Source
+
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: login-ui
+  namespace: pnguat
+spec:
+  lookupPolicy:
+    local: true
+  tags:
+    - name: "8.0.1"
+      from:
+        kind: DockerImage
+        name: us-docker.pkg.dev/forgeops-public/images/login-ui:8.0.1
+      referencePolicy:
+        type: Source
+
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: busybox
+  namespace: pnguat
+spec:
+  lookupPolicy:
+    local: true
+  tags:
+    - name: "musl"
+      from:
+        kind: DockerImage
+        name: docker.io/library/busybox:musl
+      referencePolicy:
+        type: Source
+        

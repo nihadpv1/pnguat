@@ -1,0 +1,38 @@
+kind: Component
+apiVersion: kustomize.config.k8s.io/v1alpha1
+images:
+- name: am
+  newName: image-registry.openshift-image-registry.svc:5000/forgerock-protected/am
+  newTag: 8.0.2
+- name: am-custom
+  newName: image-registry.openshift-image-registry.svc:5000/forgerock-protected/busybox
+  newTag: musl
+- name: amster
+  newName: image-registry.openshift-image-registry.svc:5000/forgerock-protected/amster
+  newTag: 8.0.2
+- name: ds
+  newName: image-registry.openshift-image-registry.svc:5000/forgerock-protected/ds
+  newTag: 8.0.2
+- name: idm
+  newName: image-registry.openshift-image-registry.svc:5000/forgerock-protected/idm
+  newTag: 8.0.1
+- name: idm-custom
+  newName: image-registry.openshift-image-registry.svc:5000/forgerock-protected/busybox
+  newTag: musl
+- name: ig
+  newName: image-registry.openshift-image-registry.svc:5000/forgerock-protected/ig
+  newTag: 8.0.2
+- name: admin-ui
+  newName: image-registry.openshift-image-registry.svc:5000/forgerock-protected/admin-ui
+  newTag: 8.0.1
+- name: end-user-ui
+  newName: image-registry.openshift-image-registry.svc:5000/forgerock-protected/end-user-ui
+  newTag: 8.0.1
+- name: login-ui
+  newName: image-registry.openshift-image-registry.svc:5000/forgerock-protected/login-ui
+  newTag: 8.0.1
+labels:
+- includeSelectors: true
+  pairs:
+    app.kubernetes.io/part-of: identity-platform
+namespace: pnguat
