@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: fr-proxy
+  namespace: pnguat
+
+spec:
+  type: ClusterIP
+
+  selector:
+    app: fr-proxy
+
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP

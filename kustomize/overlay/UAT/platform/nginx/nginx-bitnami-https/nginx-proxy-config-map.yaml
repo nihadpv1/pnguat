@@ -1,0 +1,188 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: fr-proxy-config
+  namespace: forgerock
+
+data:
+  nginx.conf: |
+    events {
+        worker_connections 1024;
+    }
+
+    http {
+        include /opt/bitnami/nginx/conf/mime.types;
+        default_type application/octet-stream;
+
+        proxy_buffer_size 16k;
+        proxy_buffers 4 16k;
+        proxy_busy_buffers_size 16k;
+        client_max_body_size 64m;
+
+        server {
+            listen 8443 ssl;
+            server_name iam.apps-crc.testing;
+
+            #
+            # Health endpoint
+            #
+
+            location /healthz {
+                access_log off;
+                return 200;
+            }
+
+            ssl_certificate     /opt/bitnami/nginx/conf/bitnami/certs/tls.crt;
+            ssl_certificate_key /opt/bitnami/nginx/conf/bitnami/certs/tls.key;
+
+            port_in_redirect off;
+            absolute_redirect off;
+
+            proxy_http_version 1.1;
+
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto https;
+
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+
+            proxy_connect_timeout 60s;
+            proxy_send_timeout 300s;
+            proxy_read_timeout 300s;
+
+            proxy_set_header X-Forwarded-Host $host;
+            proxy_set_header X-Forwarded-Port 443;
+
+            proxy_request_buffering off;
+
+            #
+            # Root & Logical Redirects
+            #
+
+            location = / {
+                return 302 /platform/;
+            }
+
+            location = /platform {
+                return 302 /platform/;
+            }
+
+            location = /admin {
+                return 302 /admin/;
+            }
+
+            location = /am {
+                return 302 /am/ui-admin/;
+            }
+
+            location = /am/console {
+                return 302 /am/ui-admin/;
+            }
+
+            location = /am/xui {
+                return 301 /am/XUI/;
+            }
+
+            #
+            # 1. AM Native Console
+            #
+
+            location ^~ /am/ui-admin/ {
+                proxy_set_header X-Forwarded-Prefix /am/ui-admin;
+                proxy_pass http://am:80/am/ui-admin/;
+            }
+
+            #
+            # 2. Login UI
+            #
+
+            location ^~ /am/XUI/ {
+                proxy_set_header X-Forwarded-Prefix /am/XUI;
+                proxy_pass http://login-ui:8080/;
+            }
+
+            #
+            # 3. AM Core & OAuth2
+            #
+
+            location ^~ /am/ {
+                proxy_set_header X-Forwarded-Prefix /am;
+                proxy_pass http://am:80;
+            }
+
+            #
+            # 4. Platform Admin UI
+            #
+
+            location ^~ /platform/ {
+                proxy_set_header X-Forwarded-Prefix /platform;
+                proxy_pass http://admin-ui:8080/;
+            }
+
+            #
+            # 5. End User UI
+            #
+
+            location ^~ /enduser/ {
+                proxy_set_header X-Forwarded-Prefix /enduser;
+                proxy_pass http://end-user-ui:8080/;
+            }
+
+            #
+            # 6. IDM Admin Console
+            #
+
+            location ^~ /admin/ {
+                proxy_set_header X-Forwarded-Prefix /admin;
+                proxy_pass http://idm:80/admin/;
+            }
+
+            #
+            # 7. API Explorer
+            #
+
+            location ^~ /apiExplorer/ {
+                proxy_set_header X-Forwarded-Prefix /apiExplorer;
+                proxy_pass http://idm:80/apiExplorer/;
+            }
+
+            #
+            # 8. IDM Core API & Sub Paths
+            #
+
+            location ^~ /openidm/ {
+                proxy_set_header X-Forwarded-Prefix /openidm;
+                proxy_pass http://idm:80/openidm/;
+            }
+
+            #
+            # 9. IDM Export
+            #
+
+            location ^~ /export/ {
+                proxy_set_header X-Forwarded-Prefix /export;
+                proxy_pass http://idm:80/export/;
+            }
+
+            #
+            # 10. IDM Upload
+            #
+
+            location ^~ /upload/ {
+                proxy_set_header X-Forwarded-Prefix /upload;
+                proxy_pass http://idm:80/upload/;
+            }
+
+            #
+            # 11. IDM OpenICF
+            #
+
+            location ^~ /openicf/ {
+                proxy_set_header X-Forwarded-Prefix /openicf;
+                proxy_pass http://idm:80/openicf/;
+            }
+        }
+    }

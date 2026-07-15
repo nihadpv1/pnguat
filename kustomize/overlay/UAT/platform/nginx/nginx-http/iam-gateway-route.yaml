@@ -1,0 +1,26 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+
+metadata:
+  name: iam-gateway
+  namespace: pnguat
+
+  annotations:
+    haproxy.router.openshift.io/hsts_header: max-age=31536000;includeSubDomains
+
+spec:
+  host: ping-uat.apps.pnguat.arabbanking.local
+
+  to:
+    kind: Service
+    name: fr-proxy
+    weight: 100
+
+  port:
+    targetPort: http
+
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+
+  wildcardPolicy: None

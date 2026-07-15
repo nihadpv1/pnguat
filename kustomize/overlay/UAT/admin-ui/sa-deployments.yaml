@@ -23,7 +23,7 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
               - matchExpressions:
-                  - key: node-role.kubernetes.io/forgerock
+                  - key: node-role.kubernetes.io/pnguat
                     operator: Exists
 
 

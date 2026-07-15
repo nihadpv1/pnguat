@@ -1,0 +1,134 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: fr-proxy-config
+  namespace: pnguat
+
+data:
+  nginx.conf: |
+    events {
+        worker_connections 1024;
+    }
+
+    http {
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+
+        proxy_buffer_size 16k;
+        proxy_buffers 4 16k;
+        proxy_busy_buffers_size 16k;
+        client_max_body_size 64m;
+
+        server {
+            listen 8080 ssl;
+            server_name iam.apps-crc.testing;
+
+            location /healthz {
+                access_log off;
+                return 200;
+            }
+
+          
+            port_in_redirect off;
+            absolute_redirect off;
+
+            proxy_http_version 1.1;
+
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
+
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+
+            proxy_connect_timeout 60s;
+            proxy_send_timeout 300s;
+            proxy_read_timeout 300s;
+
+            proxy_set_header X-Forwarded-Host $host;
+            proxy_set_header X-Forwarded-Port 443;
+
+            proxy_request_buffering off;
+
+            location = / {
+                return 302 /platform/;
+            }
+
+            location = /platform {
+                return 302 /platform/;
+            }
+
+            location = /admin {
+                return 302 /admin/;
+            }
+
+            location = /am {
+                return 302 /am/ui-admin/;
+            }
+
+            location = /am/console {
+                return 302 /am/ui-admin/;
+            }
+
+            location = /am/xui {
+                return 301 /am/XUI/;
+            }
+
+            location ^~ /am/ui-admin/ {
+                proxy_set_header X-Forwarded-Prefix /am/ui-admin;
+                proxy_pass http://am:80/am/ui-admin/;
+            }
+
+            location ^~ /am/XUI/ {
+                proxy_set_header X-Forwarded-Prefix /am/XUI;
+                proxy_pass http://login-ui:8080/;
+            }
+
+            location ^~ /am/ {
+                proxy_set_header X-Forwarded-Prefix /am;
+                proxy_pass http://am:80;
+            }
+
+            location ^~ /platform/ {
+                proxy_set_header X-Forwarded-Prefix /platform;
+                proxy_pass http://admin-ui:8080/;
+            }
+
+            location ^~ /enduser/ {
+                proxy_set_header X-Forwarded-Prefix /enduser;
+                proxy_pass http://end-user-ui:8080/;
+            }
+
+            location ^~ /admin/ {
+                proxy_set_header X-Forwarded-Prefix /admin;
+                proxy_pass http://idm:80/admin/;
+            }
+
+            location ^~ /apiExplorer/ {
+                proxy_set_header X-Forwarded-Prefix /apiExplorer;
+                proxy_pass http://idm:80/apiExplorer/;
+            }
+
+            location ^~ /openidm/ {
+                proxy_set_header X-Forwarded-Prefix /openidm;
+                proxy_pass http://idm:80/openidm/;
+            }
+
+            location ^~ /export/ {
+                proxy_set_header X-Forwarded-Prefix /export;
+                proxy_pass http://idm:80/export/;
+            }
+
+            location ^~ /upload/ {
+                proxy_set_header X-Forwarded-Prefix /upload;
+                proxy_pass http://idm:80/upload/;
+            }
+
+            location ^~ /openicf/ {
+                proxy_set_header X-Forwarded-Prefix /openicf;
+                proxy_pass http://idm:80/openicf/;
+            }
+        }
+    }

@@ -4,7 +4,7 @@ components:
 - ../../image-defaulter
 resources:
  - ../../../../vendor/forgeops-2026.1/amster/secret-generator
-namespace: forgerock
+namespace: pnguat
 patches:
   - path: secret-mount-patch.yaml  
   - path: serviceaccount-patch.yaml  

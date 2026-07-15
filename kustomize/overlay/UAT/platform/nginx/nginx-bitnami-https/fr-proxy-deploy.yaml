@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: fr-proxy
+  namespace: forgerock
+  labels:
+    app: fr-proxy
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: fr-proxy
+
+  template:
+    metadata:
+      labels:
+        app: fr-proxy
+
+    spec:
+      serviceAccountName: forgerock-sa
+
+      containers:
+      - name: nginx
+
+        image: bitnami/nginx:latest
+        imagePullPolicy: IfNotPresent
+
+        ports:
+        - containerPort: 8443
+          protocol: TCP
+
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8443
+            scheme: HTTPS
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8443
+            scheme: HTTPS
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          timeoutSeconds: 5
+          failureThreshold: 3
+
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+
+        volumeMounts:
+        - name: config
+          mountPath: /opt/bitnami/nginx/conf/nginx.conf
+          subPath: nginx.conf
+
+        - name: certs
+          mountPath: /opt/bitnami/nginx/conf/bitnami/certs
+          readOnly: true
+
+      volumes:
+      - name: config
+        configMap:
+          name: fr-proxy-config
+
+      - name: certs
+        secret:
+          secretName: fr-proxy-tls

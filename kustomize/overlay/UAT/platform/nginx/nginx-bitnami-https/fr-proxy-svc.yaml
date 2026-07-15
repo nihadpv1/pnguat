@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fr-proxy
+  namespace: forgerock
+
+spec:
+  type: ClusterIP
+
+  selector:
+    app: fr-proxy
+
+  ports:
+  - name: https
+    port: 443
+    targetPort: 8443
+    protocol: TCP
